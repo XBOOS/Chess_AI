@@ -1,6 +1,6 @@
 import numpy as np
 from evaluator import Evaluator
-import moveRuleHandler
+from moveRuleHandler import MoveRuleHandler
 class Board:
     """
     chess board
@@ -16,6 +16,7 @@ class Board:
         self._state = np.zeros((10,9),dtype = object)#['*' for i in range(90)]
         self._initialize()
         self._evaluator = Evaluator(self)
+        self._moveRuleHandler = MoveRuleHandler(self)
         self._redSet = {"R":[(9,0),(9,8)],
                 "H":[(9,1),(9,7)],
                 "E":[(9,2),(9,6)],
@@ -46,7 +47,7 @@ class Board:
 
     def pieceFlexibility(self,piece,coord):
         #maybe shouldnt cache it,recompute one but cache too many
-        moveRuleHandler.roughMoves(piece,coord)
+        #moveRuleHandler.roughMoves(piece,coord)
 
     def _initialize(self):
         
