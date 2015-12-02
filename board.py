@@ -1,6 +1,6 @@
 import numpy as np
 from evaluator import Evaluator
-#from moveRuleHandler import MoveRuleHandler
+from moveRuleHandler import MoveRuleHandler
 class Board:
     """
     chess board
@@ -17,7 +17,7 @@ class Board:
         self._lastCapturedPiece = None
         self._initialize()
         self._evaluator = Evaluator(self)
-#        self._moveRuleHandler = MoveRuleHandler(self)
+        self._moveRuleHandler = MoveRuleHandler(self)
         self._redSet = {"R":[(9,0),(9,8)],
                 "H":[(9,1),(9,7)],
                 "E":[(9,2),(9,6)],
@@ -55,6 +55,23 @@ class Board:
         # return self._state[coord] in self._state._redSet
 
 
+    def allLegalMoves(self,BlackSide):
+        allLegalMoves = []
+        if BlackSide:
+            for piece in self._redSet:
+                for coord in self._redSet[piece]:
+                    allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
+        else:
+            for piece in self._blackSet:
+                for coord in self._blackSet[piece]:
+                    allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
+
+        return allLegalMoves
+
+
+        print "=========For debugging: total number of possible legal moves : ",len(allLegalMoves)
+
+
     def isMoveLegal(self,(oldCoord,newCoord)):
         """
         args: from oldCoord to newCoord
@@ -75,14 +92,14 @@ class Board:
         target = self._state[newCoord]
         #Can just check the upper and lowercase of letter ,depends on which is faster
 
+        print "piece and target are :",piece, target
         if piece in self._redSet and target in self._redSet:
             return False
         elif piece in self._blackSet and target in self._blackSet:
             return False
         else:
             #check with chess moving rule
-            # return self._moveRuleHandler.isPatternLegal(piece,(oldCoord,newCoord))
-            return True
+            return self._moveRuleHandler.isMoveLegal(piece,(oldCoord,newCoord))
 
     def unmakeMove(self,(oldCoord,newCoord),RedSide=None):
 
@@ -167,7 +184,8 @@ class Board:
     def pieceFlexibility(self,piece,coord):
         #maybe shouldnt cache it,recompute one but cache too many
         #moveRuleHandler.roughMoves(piece,coord)
-        return 0
+        return self._moveRuleHandler.numOfLegalMoves(piece,coord)
+        #return 0
 
     def _initialize(self):
 
@@ -267,4 +285,10 @@ if __name__=="__main__":
     board.unmakeMove(((9,7),(7,6)),True)
     board.printBoard()
 
+    board.unmakeMove(((0,0),(1,0)))
+    print
+    print "==============Testing for isMoveLegal()==============="
+    print "Legal cannon move check : ",board.isMoveLegal(((9,7),(7,6)))
+    print "Legal cannon move check : ",board.isMoveLegal(((0,0),(1,0)))
+    print "Illegal cannon move check : ",board.isMoveLegal(((9,8),(9,7)))
 

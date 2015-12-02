@@ -17,7 +17,7 @@ class SearchHandler:
             # reach the search depth limit or terminal node
             return (self._board._lastMove,self._board.calcValue())
 
-        legalMoves = self._board.legalMoves()
+        legalMoves = self._board.allLegalMoves(isMax)# isMax = Computer =Black side
         best_move = None
         if isMax:
             for move in legalMoves:
@@ -74,7 +74,7 @@ class Game_for_test:
         print self._gameRule
         return
 
-    def legalMoves(self):
+    def allLegalMoves(self,BlackSide):
         """
         return legalMoves ==> a list of childNodes
         """

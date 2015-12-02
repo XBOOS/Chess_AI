@@ -7,7 +7,7 @@
 # UIHandler : some text format for print out
 
 from board import Board
-#import userHandler
+import userHandler
 from searchHandler import SearchHandler
 from uiHandler import UIHandler
 class Game:
@@ -25,7 +25,7 @@ class Game:
         self.searchHandler = SearchHandler(self.board)
         self.uiHandler = UIHandler(self.board)
 
-        #self.run()
+        self.run()
 
     def run(self):
         self.uiHandler.printInit()

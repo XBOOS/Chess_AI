@@ -1,6 +1,6 @@
 # contain the piece moving rules of Chinese Chess
 # Imply the rules by possbile moves
-from board import Board #just for testing
+# from board import Board #just for testing
 class MoveRuleHandler:
 
     def __init__(self,board):
@@ -12,28 +12,66 @@ class MoveRuleHandler:
 
     def positionMoves(self):
         return
-    def isPatternLegal(self,piece,(oldCoord,newCoord)):
-        """
-        check the moving pattern, regardless of target position availability
+
+    def isMoveLegal(self,piece,(oldCoord,newCoord)):
+        return (oldCoord,newCoord) in self.getLegalMoveList(piece,oldCoord)
+
         """
         if piece.upper()=="R": #for Rook
-            if oldCoord[0]==newCoord[0]: # on the same row
-                #check obstacle
-                for col in range(min(oldCoord[1],newCoord[1])+1,max(oldCoord[1],newCoord[1])):
-                    if self._board._state[oldCoord[0]][col]!="*":
-                        return False
-            elif oldCoord[1]==newCoord[1]: # on the same column
-                for row in range(min(oldCoord[0],newCoord[0])+1,max(oldCoord[1],newCoord[1])):
-                    if self._board._state[oldCoord[row]][1]!="*":
-                        return False
-            else: # now on the same line
-                return False
-            return True
+            return (oldCoord,newCoord) in self.rook_moveList((oldCoord))
+#            if oldCoord[0]==newCoord[0]: # on the same row
+#                #check obstacle
+#                for col in range(min(oldCoord[1],newCoord[1])+1,max(oldCoord[1],newCoord[1])):
+#                    if self._board._state[oldCoord[0]][col]!="*":
+#                        return False
+#            elif oldCoord[1]==newCoord[1]: # on the same column
+#                for row in range(min(oldCoord[0],newCoord[0])+1,max(oldCoord[1],newCoord[1])):
+#                    if self._board._state[oldCoord[row]][1]!="*":
+#                        return False
+#            else: # now on the same line
+#                return False
+#            return True
         elif piece.upper()=="H": #for Horse
             # only : so  (x1-x2)*(y1-y2)==2
 #            if (oldCoord[0]-newCoord[0])*(oldCoord[1]-newCoord[1])==2:
-            return
+            return (oldCoord,newCoord) in self.horse_movelist((oldCoord))
+        elif piece.upper()=="E":
+            return (oldCoord,newCoord) in self.elephant_moveList((oldCoord))
+        elif piece.upper()=="A":
+            return (oldCoord,newCoord) in self.advisor_moveList((oldCoord))
+        elif piece.upper()=="K":
+            return (oldCoord,newCoord) in self.king_moveList((oldCoord))
+        elif piece.upper()=="C":
+            return (oldCoord,newCoord) in self.cannon_moveList((oldCoord))
+        elif piece.upper()=="P":
+            return (oldCoord,newCoord) in self.pawn_moveList((oldCoord))
+        else:
+            raise Exception("illegal piece input in checkMoveLegal"+piece)
 
+        """
+
+    def getLegalMoveList(self,piece,coord):
+        piece_up = piece.upper()
+        if piece_up == "R":
+            return self.rook_moveList(coord)
+        elif piece_up == "H":
+            return self.horse_movelist(coord)
+        elif piece_up =="E":
+            return self.elephant_moveList(coord)
+        elif piece_up =="A":
+            return self.advisor_moveList(coord)
+        elif piece_up =="K":
+            return self.king_moveList(coord)
+        elif piece_up =="C":
+            return self.cannon_moveList(coord)
+        elif piece_up =="P":
+            return self.pawn_moveList(coord)
+        else:
+            raise Exception("illegal piece input in checkMoveLegal"+piece)
+
+
+    def numOfLegalMoves(self,piece,coord):
+        return len(self.getLegalMoveList(piece,coord))
 
 
     """
@@ -41,6 +79,7 @@ class MoveRuleHandler:
     For alpha beta pruning, I need to sort it according to self-define quality evaluation
     one way is to evaluate the board value after move if doing pre-computation
     """
+
     def rook_moveList(self,(x,y)):
         """
         args : (x,y)  (the current cooordinate)
@@ -236,7 +275,7 @@ class MoveRuleHandler:
 
 if __name__ == "__main__":
     print "=============Testing for Chess move rules==========="
-    print "For testing use, import Board class"
+    print "For testing use, import the board module for Board class first"
     board_for_test = Board()
     board_for_test.printBoard()
     moveRuleHandler = MoveRuleHandler(board_for_test)
@@ -284,3 +323,4 @@ if __name__ == "__main__":
     print "Red Rook(2,5) : ",moveRuleHandler.rook_moveList((2,5))
 
 
+    print "===========Testing for isMoveLegal() is done in board.py========"

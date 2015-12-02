@@ -6,8 +6,8 @@ class Evaluator:
     1. pieces' value evaluation
     2. pieces' position evalution
     3. pieces' flexibility evaluation
-    4. relationship evaluation 
-        For simplicity, I only consider some special set of relationship between pieces 
+    4. relationship evaluation
+        For simplicity, I only consider some special set of relationship between pieces
 
     Acknoledgement:
     I read papers about the ELP chinese chess methodolody and use some of their evaluation methods.
@@ -23,16 +23,13 @@ class Evaluator:
         self._position_coef = coef2
         self._flexibility_coef = coef3
 
-    #for testing use
-    def setBoard(self,board):    
-        self._board = board
-    def calcValue(self,RedSide):     
+    def calcValue(self,RedSide):
         # accept a set of pieces from one player side a.k.a red or black
         if RedSide:
             pieceSet = self._board._redSet
         else:
             pieceSet = self._board._blackSet
-        
+
         value = 0
         for piece in pieceSet:
             coordlist = pieceSet[piece]
@@ -40,10 +37,10 @@ class Evaluator:
                 pieceValue = self.evaValue(piece)
                 positionValue = self.evaPosition(piece,coord)
                 flexibilityValue = self.evaFlexibility(piece,coord)
-                #relationshipValue 
+                #relationshipValue
                 value += self._piece_coef*pieceValue + self._position_coef*positionValue+self._flexibility_coef*flexibilityValue#+....
-        return value        
-                
+        return value
+
 
     def evaValue(self,piece):
         #already in the consistent upper case
@@ -51,16 +48,21 @@ class Evaluator:
         return self._strengthList[piece]
 
     def evaPosition(self,piece,coord):
-        return positionTable.getPositionValue(piece,coord) 
-    
+        return positionTable.getPositionValue(piece,coord)
+
     def evaFlexibility(self,piece,coord):
-        # to evaluate the number of free moves form current states,determined by current board state    
+        # to evaluate the number of free moves form current states,determined by current board state
         # delegate to board to do the work
         return self._board.pieceFlexibility(piece,coord)
         #return 0
 
+#for testing use
+    def setBoard(self,board):
+        self._board = board
+
+
 # For testing use -mock
-class Board: #not needed, but dont affect the module
+class Board_for_test: #not needed, but dont affect the module
     def __init__(self):
         self._redSet = {"R":[(9,0),(9,8)],
                 "H":[(9,1),(9,7)],
@@ -83,21 +85,20 @@ class Board: #not needed, but dont affect the module
     def changeBlackSet(self,piece,newList):
         self._blackSet[piece] = newList
         return
-
     def pieceFlexibility(self,piece,coord):
         return 0 # only for testing use
 
 
 
 
- 
+
 if __name__=="__main__":
 
     print "Testing for evaluator class"
     print "==========================="
     print "cannot import board to use due to mutual importing"
     print "just mock a new Board class"
-    board = Board()
+    board = Board_for_test()
     evaluator = Evaluator(board)
     print "=====evaValue======="
     print "R = ",evaluator.evaValue("R"),"  r = ",evaluator.evaValue("r")
@@ -111,9 +112,9 @@ if __name__=="__main__":
     print "======evaPosition====="
     print "16 = ",evaluator.evaPosition("R",(3,2))
     print "14 = ",evaluator.evaPosition("H",(2,7))
-   
+
     print "======calcValue======"
 
     board.changeRedSet("R",[(8,0),(9,8)])
-    print "Red side board value = ",evaluator.calcValue(True) 
+    print "Red side board value = ",evaluator.calcValue(True)
     print "Black side board value = ",evaluator.calcValue(False)
