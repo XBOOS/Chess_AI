@@ -67,7 +67,6 @@ class Game_for_test:
                 "B":["D","E"],"C":["F","G"],"I":["K","L"],
                 "J":["M","N"]}
         self._values = {"D":15,"E":8,"F":3,"G":4,"K":-5,"L":6,"M":1,"N":9}
-
         return
 
     def showGameRule(self):

@@ -114,6 +114,7 @@ class MoveRuleHandler:
                 ,(0,-1):[(1,-2),(-1,-2)]
                 ,(1,0):[(2,1),(2,-1)]
                 ,(0,1):[(1,2),(-1,2)]}
+
         (i,j) = (x,y)
         for ob_step in unitSteps: #the key is position of obstacle
             obstacle = self.add_tuple((x,y),ob_step)
