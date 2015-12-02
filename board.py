@@ -36,7 +36,57 @@ class Board:
 
     def calcValue(self):
         # using evaluation function to calculate the value of the current state
-        return blackValue()-redValue()
+        return self._blackValue()-self._redValue()
+
+    def isOnBoard(self,coord):
+        return 0<= coord[0]<9 and 0<=coord[1]<10
+
+    def isMoveLegal(self,(oldCoor,newCoord)):
+        #check board border and target position occupation by own piece
+        if not isOnBoard(coord):
+            return False
+
+        piece = self._state[oldCoord]
+        target = self._state[newCoord]
+        #Can just check the upper and lowercase of letter ,depends on which is faster
+
+        if piece in self._redSet and target in self._redSet:
+            return False
+        elif piece in self._blackSet and target in self._blackSet:
+            return False
+        else:
+            #check with chess moving rule
+            return self._moveRuleHandler.isMoveLegal((oldCoord,newCoord))
+
+
+    def makeMove(self,RedSide,(oldCoord,newCoord)):
+        #should pass in player?
+        #don't include the legal check here,because wethere checking depends on player/comp side
+        #upate the grid and piece lists
+        piece = self._state[oldCoord]
+        target = self._state[newCoord]
+        #special case : King suicide, but this would be prevented by evaluation func
+        if RedSide:
+        # if piece in self._redSet:
+            self._redSet[piece] = [newCoord if x==oldCoord else x for x in self._redSet[piece]]
+        else:
+            self._blackSet[piece] = [newCoord if x==oldCoord else x for x in self._blackSet[piece]]
+
+        self._state[oldCoord] = "*"
+        self._state[newCoord] = piece
+        #decide wether capturing move
+        if target != "*":
+            if not RedSide:#only can eat piece of other side
+            #if target in self._redSet:
+                self._redSet[target].remove(newCoord)
+                if self._redSet[target]==[]:
+                    # if no pieces left remove from board list
+                    del self._redSet[target]
+            else:
+                self._blackSet[target].remove(newCoord)
+                if self._blackSet[target]==[]:
+                    # if no pieces left remove from board list
+                    del self._blackSet[target]
 
     def _blackValue(self):
         # calculate the value of the black pieces a.k.a computer side
@@ -48,13 +98,14 @@ class Board:
     def pieceFlexibility(self,piece,coord):
         #maybe shouldnt cache it,recompute one but cache too many
         #moveRuleHandler.roughMoves(piece,coord)
+        return 0
 
     def _initialize(self):
-        
+
         for i in range(10):
             for j in range(9):
-                self._state[i][j]="*" 
-    
+                self._state[i][j]="*"
+
         self._state[0][0] =self._state[0][8]= "r"
         self._state[9][0] =self._state[9][8]= "R"
         self._state[0][1] =self._state[0][7]= "h"
@@ -75,7 +126,7 @@ class Board:
 
     def splitXY(self,xy):
         return (xy//9,xy%9)
-    
+
     def printBoard(self):
         print "             Current Board"
         print "       0   1   2   3   4   5   6   7   8   "
@@ -84,7 +135,7 @@ class Board:
             print i," [",
             for j in range(9):
                 print " ",self._state[i][j],
-            print " ] ",i    
+            print " ] ",i
         print "----------------------------------------------"
         print "~ ~ ~ ~ ~ ~ ~ ~ ~ River ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ "
         print "----------------------------------------------"
@@ -92,10 +143,10 @@ class Board:
             print i," [",
             for j in range(9):
                 print " ",self._state[i][j],
-            print " ] ",i    
-                
+            print " ] ",i
+
         print "----------------------------------------------"
-            
+
         print "       0   1   2   3   4   5   6   7   8   "
 
 
@@ -103,9 +154,22 @@ class Board:
 if __name__=="__main__":
     print "Testing for Board"
     board = Board()
-    print board.combineXY(3,4)
-    print board.splitXY(45)
+    #print board.combineXY(3,4)
+    #print board.splitXY(45)
 
     board.printBoard()
-    print board._redSet
-    print board._blackSet
+    print "===red set===",board._redSet
+    print "===black set===",board._blackSet
+
+    print "========calcValue test==========="
+    print "Initial board: red-black = 0 ? ",board.calcValue()
+
+   print "==========utilities test=========="
+   print "==isOnBoard()=="
+   print "(3,2) : " board.isOnBoard((3,2))
+   print "(11,9) : " board.isOnBoard((11,9))
+   print "(6,-2) : " board.isOnBoard((6,-2))
+   print "==isMoveLegal=="
+   print "illegal :  "board.isMoveLegal((0,0),(0,1))
+   print "illegal :  "board.isMoveLegal((2,1),(0,1))
+   print "illegal :  "board.isMoveLegal((0,0),(0,1))

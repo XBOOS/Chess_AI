@@ -84,6 +84,8 @@ class Board: #not needed, but dont affect the module
         self._blackSet[piece] = newList
         return
 
+    def pieceFlexibility(self,piece,coord):
+        return 0 # only for testing use
 
 
 

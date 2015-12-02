@@ -3,14 +3,14 @@
 
 # userHandler : to handle the user input and directly interate with the users
 # searchHandler : contain the minimax with alpha-beta pruning search process
-# KBHandler 
+# KBHandler
 # UIHandler : some text format for print out
 
 from board import Board
 #import userHandler
-#import searchHandler
+from searchHandler import SearchHandler
 from uiHandler import UIHandler
-class Game: 
+class Game:
     """
     whole game object
     maintain some game status
@@ -19,27 +19,27 @@ class Game:
     """
     def __init__(self):
 #initialize and start the game
-        
+
         self.board = Board()
 #        self.userHandler = UserHandler()
-#        self.searchHandler = SearchHandler()
+        self.searchHandler = SearchHandler(self.board)
         self.uiHandler = UIHandler(self.board)
-        
+
         #self.run()
-    
+
     def run(self):
-        uiHandler.printInit()
-        uiHandler.printBoard() #the initial board state
+        self.uiHandler.printInit()
+        self.uiHandler.printBoard() #the initial board state
         while True:
             # (OldCoord,newCoord) in the form of ((0,1),(4,3)),illegal intentions are dealt with by userHandler
-            (oldCoord,newCoord) = userHandler.askLegalMove(self.board) 
-            self.board.pieceMove((oldCoord,newCoord)) #player move, board state updated
-            uiHandler.printBoard()
+            (oldCoord,newCoord) = self.userHandler.askLegalMove(self.board)
+            self.board.makeMove((oldCoord,newCoord)) #player move, board state updated
+            self.uiHandler.printBoard()
             if self.checkOver():
                 break
-            (oldCoord,newCoord) = searchHandler.getBestMove(self.board)
-            self.board.pieceMove((oldCoord,newCoord)) # computer move, board state updated
-            uiHandler.printBoard()
+            (oldCoord,newCoord) = self.searchHandler.getBestMove()
+            self.board.makeMove((oldCoord,newCoord)) # computer move, board state updated
+            self.uiHandler.printBoard()
             if self.checkOver():
                 break
 
@@ -54,10 +54,10 @@ class Game:
             return False
 
 
-        
+
 
 
 if __name__ =="__main__":
     print "Testing for chess game"
     game = Game()
-    game.uiHandler.printInit() 
+    game.uiHandler.printInit()
