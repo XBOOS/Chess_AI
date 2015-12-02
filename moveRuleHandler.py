@@ -70,16 +70,19 @@ class MoveRuleHandler:
         return : Horse move: go one unit step orthogona and one unit step diagonal
         """
         legalMoves = []
-        unitSteps = {(-1,0):[(-2,1),(-2,1)],(0,-1):[(1,-2),(-1,-2)],(1,0):[(2,1),(2,-1)],(0,1):[(1,2),(-1,2)]}
+        unitSteps = {(-1,0):[(-2,-1),(-2,1)]
+                ,(0,-1):[(1,-2),(-1,-2)]
+                ,(1,0):[(2,1),(2,-1)]
+                ,(0,1):[(1,2),(-1,2)]}
         (i,j) = (x,y)
         for ob_step in unitSteps: #the key is position of obstacle
             obstacle = self.add_tuple((x,y),ob_step)
             # get out of board or get horse's "leg" obstacled
             if not self._board.isOnBoard(obstacle) or self._board.getPiece(obstacle) !="*":
                 continue
-            for tmp in unitSteps[obstacle]:
-                self.add_tuple((i,j) ,tmp)
-                if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or self._board.isOnSameSide((x,y),(j,j))):
+            for tmp in unitSteps[ob_step]:
+                (i,j) = self.add_tuple((i,j),tmp)
+                if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or not self._board.isOnSameSide((x,y),(i,j))):
                     #legalMoves.append((i,j))
                     legalMoves.append(((x,y),(i,j)))
                 (i,j) = (x,y)
@@ -95,17 +98,22 @@ class MoveRuleHandler:
         unitSteps = [(-1,1),(-1,-1),(1,-1),(1,1)]
         (i,j) = (x,y)
         for unitStep in unitSteps:
-            (i,j) = self.add_tuple((i,j) , unitStep)
-
+            (i,j) = self.add_tuple((i,j),unitStep)
+            #print "now the (i,j ) is ",(i,j)
             # check the elephant eye is obstacled or not
-            if not self._board.isOnBoard(obstacle) or self._board.getPiece(obstacle) !="*":
+
+            if not self._board.isOnBoard((i,j)) or self._board.getPiece((i,j)) !="*":
+                (i,j) = (x,y)
                 continue
-            (i,j) = self.add_tuple((i,j) , unitStep)
-            if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or self._board.isOnSameSide((x,y),(j,j))):
-                if self._board.onRedSide((x,y)) and x<5:#cross the river
+            (i,j) = self.add_tuple((i,j), unitStep)
+            if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or not self._board.isOnSameSide((x,y),(i,j))):
+                if self._board.onRedSide((x,y)) and i<5:#cross the river
+                    (i,j) = (x,y)
                     continue
-                elif not self._board.onRed((x,y)) and x>4:#cross the river
+                elif not self._board.onRedSide((x,y)) and i>4:#cross the river
+                    (i,j) = (x,y)
                     continue
+
                 #legalMoves.append((i,j))
                 legalMoves.append(((x,y),(i,j)))
             (i,j) = (x,y)
@@ -233,6 +241,16 @@ if __name__ == "__main__":
     print "=====King :  king_moveList====="
     print "Black King : ",moveRuleHandler.king_moveList((0,4))
     print "Red King : ",moveRuleHandler.king_moveList((9,4))
-    print "Black "
+    print "Black Advisor (0,3) : ",moveRuleHandler.advisor_moveList((0,3))
+    print "Red Advisor (9,5) : ",moveRuleHandler.advisor_moveList((9,5))
+    print "Black Elephant (0,6) : ",moveRuleHandler.elephant_moveList((0,6))
+    print "Red Elephant (9,2) : ",moveRuleHandler.elephant_moveList((9,2))
+    print "have not checked about elephant eye yet"
+    print "Black Horse(0,1) : ",moveRuleHandler.horse_movelist((0,1))
+    print "Red Horse(9,7) : ",moveRuleHandler.horse_movelist((9,7))
+    print "Black Rook(0,0) : ",moveRuleHandler.rook_moveList((0,0))
+    print "Red Rook(9,8) : ",moveRuleHandler.rook_moveList((9,8))
+    print "Black Cannon(2,7) : ",moveRuleHandler.cannon_moveList((2,7))
+    print "Red Cannon(8,1) : ",moveRuleHandler.cannon_moveList((8,1))
 
 
