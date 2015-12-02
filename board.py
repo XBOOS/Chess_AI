@@ -41,10 +41,11 @@ class Board:
     def isOnBoard(self,coord):
         return 0<= coord[0]<9 and 0<=coord[1]<10
 
-    def isMoveLegal(self,(oldCoor,newCoord)):
+    def isMoveLegal(self,(oldCoord,newCoord)):
         #check board border and target position occupation by own piece
-        if not isOnBoard(coord):
+        if not (self.isOnBoard(oldCoord) or self.isOnBoard(newCoord)):
             return False
+
 
         piece = self._state[oldCoord]
         target = self._state[newCoord]
@@ -164,12 +165,16 @@ if __name__=="__main__":
     print "========calcValue test==========="
     print "Initial board: red-black = 0 ? ",board.calcValue()
 
-   print "==========utilities test=========="
-   print "==isOnBoard()=="
-   print "(3,2) : " board.isOnBoard((3,2))
-   print "(11,9) : " board.isOnBoard((11,9))
-   print "(6,-2) : " board.isOnBoard((6,-2))
-   print "==isMoveLegal=="
-   print "illegal :  "board.isMoveLegal((0,0),(0,1))
-   print "illegal :  "board.isMoveLegal((2,1),(0,1))
-   print "illegal :  "board.isMoveLegal((0,0),(0,1))
+    print "==========utilities test=========="
+    print "==isOnBoard()=="
+    print "(3,2) : ", board.isOnBoard((3,2))
+    print "(11,9) : ", board.isOnBoard((11,9))
+    print "(6,-2) : ", board.isOnBoard((6,-2))
+#"""
+    print "==isMoveLegal=="
+    print "illegal(=False) :  ",board.isMoveLegal(((0,0),(0,1)))
+    print "illegal(=False) :  ",board.isMoveLegal(((2,1),(0,1)))
+    print "illegal(=False) :  ",board.isMoveLegal(((0,0),(0,1)))
+    print "legal(=True) :  ",board.isMoveLegal(((0,0),(1,0)))
+    print "legal(=True) :  ",board.isMoveLegal(((8,0),(2,1)))
+#"""
