@@ -64,6 +64,7 @@ class MoveRuleHandler:
         return legalMoves
 
 
+
     def horse_movelist(self,(x,y)):
         """
         args : (x,y)  (the current cooordinate)
@@ -164,13 +165,15 @@ class MoveRuleHandler:
         for unitStep in unitSteps:
             (i,j) = self.add_tuple((i,j) , unitStep)
             while self._board.isOnBoard((i,j)) and self._board._state[i][j]=="*":
+                #print "the first while loop (i,j) = ",(i,j)
                 legalMoves.append(((x,y),(i,j)))
                 (i,j) = self.add_tuple((i,j) , unitStep)
             if self._board.isOnBoard((i,j)):# come across obstacle piece
                 #check capturing possibility
                 (i,j) = self.add_tuple((i,j) , unitStep)
                 while self._board.isOnBoard((i,j)) and self._board._state[i][j]=="*":
-                    pass
+                    (i,j) = self.add_tuple((i,j) , unitStep)
+                    continue
                 if self._board.isOnBoard((i,j)) and not self._board.isOnSameSide((x,y),(i,j)):# come across obstacle piece
                     legalMoves.append(((x,y),(i,j)))
             (i,j) = (x,y)
@@ -251,6 +254,33 @@ if __name__ == "__main__":
     print "Black Rook(0,0) : ",moveRuleHandler.rook_moveList((0,0))
     print "Red Rook(9,8) : ",moveRuleHandler.rook_moveList((9,8))
     print "Black Cannon(2,7) : ",moveRuleHandler.cannon_moveList((2,7))
-    print "Red Cannon(8,1) : ",moveRuleHandler.cannon_moveList((8,1))
+    print "Red Cannon(7,1) : ",moveRuleHandler.cannon_moveList((7,1))
+    print "Black Pawn(3,0) : ",moveRuleHandler.pawn_moveList((3,0))
+    print "Black Pawn(3,6) : ",moveRuleHandler.pawn_moveList((3,6))
+    print "Red Pawn(6,2) : ",moveRuleHandler.pawn_moveList((6,2))
+    print "Red Pawn(6,4) : ",moveRuleHandler.pawn_moveList((6,4))
+
+    print "Make a new board for testing obstacle(especially for horse and elephant) and capturing moves"
+    board_for_test.makeMove(((9,7),(7,6)))
+    print "======after makeMove((9,7),(7,6))=========="
+    board_for_test.printBoard()
+    print "Red Cannon(7,7) : ",moveRuleHandler.cannon_moveList((7,7))
+    print "Red Horse(7,6) : ",moveRuleHandler.horse_movelist((7,6))
+
+    print "Good Job!"
+    print "======after unmakeMove((9,7),(7,6))=========="
+    board_for_test.unmakeMove(((9,7),(7,6)))
+    board_for_test.printBoard()
+    print "============RED ROOK ATTACKING BLACK CANNON========================="
+    print "======after makeMove((9,8),(8,8))============"
+    board_for_test.makeMove(((9,8),(8,8)))
+    board_for_test.printBoard()
+    print "======after makeMove((8,8),(8,5))============"
+    board_for_test.makeMove(((8,8),(8,5)))
+    board_for_test.printBoard()
+    print "======after makeMove((8,5),(2,5))============"
+    board_for_test.makeMove(((8,5),(2,5)))
+    board_for_test.printBoard()
+    print "Red Rook(2,5) : ",moveRuleHandler.rook_moveList((2,5))
 
 

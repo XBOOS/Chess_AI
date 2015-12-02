@@ -14,6 +14,7 @@ class Board:
     """
     def __init__(self):
         self._state = np.zeros((10,9),dtype = object)#['*' for i in range(90)]
+        self._lastCapturedPiece = None
         self._initialize()
         self._evaluator = Evaluator(self)
 #        self._moveRuleHandler = MoveRuleHandler(self)
@@ -83,12 +84,43 @@ class Board:
             # return self._moveRuleHandler.isPatternLegal(piece,(oldCoord,newCoord))
             return True
 
-    def makeMove(self,RedSide,(oldCoord,newCoord)):
-        #should pass in player?
-        #don't include the legal check here,because wethere checking depends on player/comp side
+    def unmakeMove(self,(oldCoord,newCoord),RedSide=None):
+
+        if RedSide==None:
+            RedSide = self.onRedSide(newCoord)
+        piece = self.getPiece(newCoord)
+        target = self._lastCapturedPiece # the name is corresponding to makeMove
+        #restore the chess board state and piece set
+        self.setPiece(oldCoord,piece)
+        self.setPiece(newCoord,target)
+        if target =="*":
+            return
+        if RedSide:# the captured piece is black
+            if target in self._blackSet:
+                self._blackSet.append(newCoord)
+            else:
+                self._blackSet[target] = [newCoord]
+        else:
+            if target in self._redSet:
+                self._redSet.append(newCoord)
+            else:
+                self._redSet[target] = [newCoord]
+
+
+        self.makeMove((newCoord,oldCoord),RedSide)
+
+    def makeMove(self,(oldCoord,newCoord),RedSide=None):
+        #should pass in player?  Ride = Player = True, Black = Computer = False
+
+        #!!!!!!Don't include the legal check here,because wethere checking depends on player/comp side
         #upate the grid and piece lists
-        piece = self._state[oldCoord]
-        target = self._state[newCoord]
+
+        #piece = self._state[oldCoord[0]][oldCoord[1]]
+        #target = self.getPiece[newCoord[0]][newCoord[1]]
+        piece = self.getPiece(oldCoord)
+        target = self.getPiece(newCoord)
+        if RedSide ==None:
+            RedSide = self.onRedSide((oldCoord))
         #special case : King suicide, but this would be prevented by evaluation func
         if RedSide:
         # if piece in self._redSet:
@@ -96,9 +128,14 @@ class Board:
         else:
             self._blackSet[piece] = [newCoord if x==oldCoord else x for x in self._blackSet[piece]]
 
-        self._state[oldCoord] = "*"
-        self._state[newCoord] = piece
-        #decide wether capturing move
+        #self._state[oldCoord[0]][oldCoord[1]] = "*"
+        #self._state[newCoord[0]][newCoord[1]] = piece
+        self.setPiece(oldCoord,"*")
+        self.setPiece(newCoord,piece)
+
+        #cache this captured piece
+        self._lastCapturedPiece = target
+        #if is capturing move,update the piece list
         if target != "*":
             if not RedSide:#only can eat piece of other side
             #if target in self._redSet:
@@ -113,7 +150,12 @@ class Board:
                     del self._blackSet[target]
 
     def getPiece(self,coord):
-        return self._state[coord]
+        return self._state[coord[0]][coord[1]]
+
+    def setPiece(self,coord,newPiece):
+        self._state[coord[0]][coord[1]] = newPiece
+        return
+
 
     def _blackValue(self):
         # calculate the value of the black pieces a.k.a computer side
@@ -155,7 +197,7 @@ class Board:
         return (xy//9,xy%9)
 
     def printBoard(self):
-        print "             Current Board"
+        print "\n\n             Current Board"
         print "       0   1   2   3   4   5   6   7   8   "
         print "----------------------------------------------"
         for i in range(5):
@@ -174,7 +216,7 @@ class Board:
 
         print "----------------------------------------------"
 
-        print "       0   1   2   3   4   5   6   7   8   "
+        print "       0   1   2   3   4   5   6   7   8  \n\n "
 
 
 
@@ -207,3 +249,22 @@ if __name__=="__main__":
     print "==isOnSameSide=="
     print board._state[(0,0)],board._state[(2,7)],"  on the same side " ,board.isOnSameSide((0,0),(2,7))
     print board._state[(0,5)],board._state[(9,5)],"on different side ", board.isOnSameSide((0,5),(9,5))
+
+
+    print "==makeMove====="
+    board.printBoard()
+
+    print "==============after makeMove((0,0),(1,0))============="
+    board.makeMove(((0,0),(1,0)))
+    board.printBoard()
+
+
+    print "==============after makeMove((9,7),(7,6))============="
+    board.makeMove(((9,7),(7,6)),True)
+    board.printBoard()
+
+    print "==============after unmakeMove((9,7),(7,6))============="
+    board.unmakeMove(((9,7),(7,6)),True)
+    board.printBoard()
+
+
