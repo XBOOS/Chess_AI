@@ -1,5 +1,6 @@
 # contain the piece moving rules of Chinese Chess
 # Imply the rules by possbile moves
+from board import Board #just for testing
 class MoveRuleHandler:
 
     def __init__(self,board):
@@ -30,14 +31,15 @@ class MoveRuleHandler:
             return True
         elif piece.upper()=="H": #for Horse
             # only : so  (x1-x2)*(y1-y2)==2
-            if (oldCoord[0]-newCoord[0])*(oldCoord[1]-newCoord[1])==2:
-                if
-
+#            if (oldCoord[0]-newCoord[0])*(oldCoord[1]-newCoord[1])==2:
+            return
 
 
 
     """
-    The legal move list generation takes move quality into consideration
+    The legal move list generation doesnt take move quality into consideration
+    For alpha beta pruning, I need to sort it according to self-define quality evaluation
+    one way is to evaluate the board value after move if doing pre-computation
     """
     def rook_moveList(self,(x,y)):
         """
@@ -49,10 +51,10 @@ class MoveRuleHandler:
         (i,j) = (x,y)
 
         for unitStep in unitSteps:
-            (i,j) += unitStep
+            (i,j) = self.add_tuple((i,j) , unitStep)
             while self._board.isOnBoard((i,j)) and self._board._state[i][j]=="*":
                 legalMoves.append(((x,y),(i,j)))
-                (i,j) += unitStep
+                (i,j) = self.add_tuple((i,j) , unitStep)
             if self._board.isOnBoard((i,j)):# come across obstacle piece
                 #check side, different side=>capturing move
                 if not self._board.isOnSameSide((x,y),(i,j)):
@@ -71,12 +73,12 @@ class MoveRuleHandler:
         unitSteps = {(-1,0):[(-2,1),(-2,1)],(0,-1):[(1,-2),(-1,-2)],(1,0):[(2,1),(2,-1)],(0,1):[(1,2),(-1,2)]}
         (i,j) = (x,y)
         for ob_step in unitSteps: #the key is position of obstacle
-            obstacle = (x,y)+ob_step
+            obstacle = self.add_tuple((x,y),ob_step)
             # get out of board or get horse's "leg" obstacled
-            if not self._board.isOnBoard(obstacle) or self._board._state[obstacle[0]][obstacle[1]]] !="*":
+            if not self._board.isOnBoard(obstacle) or self._board.getPiece(obstacle) !="*":
                 continue
             for tmp in unitSteps[obstacle]:
-                (i,j) +=tmp
+                self.add_tuple((i,j) ,tmp)
                 if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or self._board.isOnSameSide((x,y),(j,j))):
                     #legalMoves.append((i,j))
                     legalMoves.append(((x,y),(i,j)))
@@ -93,12 +95,12 @@ class MoveRuleHandler:
         unitSteps = [(-1,1),(-1,-1),(1,-1),(1,1)]
         (i,j) = (x,y)
         for unitStep in unitSteps:
-            (i,j) += unitStep
+            (i,j) = self.add_tuple((i,j) , unitStep)
 
             # check the elephant eye is obstacled or not
-            if not self._board.isOnBoard(obstacle) or self._board._state[obstacle[0]][obstacle[1]]] !="*":
+            if not self._board.isOnBoard(obstacle) or self._board.getPiece(obstacle) !="*":
                 continue
-            (i,j)+=unitStep
+            (i,j) = self.add_tuple((i,j) , unitStep)
             if self._board.isOnBoard((i,j)) and (self._board._state[i][j]=="*" or self._board.isOnSameSide((x,y),(j,j))):
                 if self._board.onRedSide((x,y)) and x<5:#cross the river
                     continue
@@ -152,13 +154,13 @@ class MoveRuleHandler:
         (i,j) = (x,y)
 
         for unitStep in unitSteps:
-            (i,j) += unitStep
+            (i,j) = self.add_tuple((i,j) , unitStep)
             while self._board.isOnBoard((i,j)) and self._board._state[i][j]=="*":
                 legalMoves.append(((x,y),(i,j)))
-                (i,j) += unitStep
+                (i,j) = self.add_tuple((i,j) , unitStep)
             if self._board.isOnBoard((i,j)):# come across obstacle piece
                 #check capturing possibility
-                (i,j) += unitStep
+                (i,j) = self.add_tuple((i,j) , unitStep)
                 while self._board.isOnBoard((i,j)) and self._board._state[i][j]=="*":
                     pass
                 if self._board.isOnBoard((i,j)) and not self._board.isOnSameSide((x,y),(i,j)):# come across obstacle piece
@@ -177,26 +179,26 @@ class MoveRuleHandler:
         if self._board.onRedSide((x,y)):
             unitSteps = [(-1,0),(0,-1),(0,1)]
             if x>4: # before crossing the river
-                (i,j) += (-1,0)
+                (i,j) = (i-1,j)
                 if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
-                    legalMoves.append((x,y),(i,j))
+                    legalMoves.append(((x,y),(i,j)))
             else: # after crossing the river
                 for unitStep in unitSteps:
-                    (i,j) += unitStep
+                    (i,j) = self.add_tuple((i,j) , unitStep)
                     if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
-                        legalMoves.append((x,y),(i,j))
+                        legalMoves.append(((x,y),(i,j)))
                     (i,j) = (x,y)
         else: # on the black side
             unitSteps = [(1,0),(0,1),(0,-1)]
             if x<5: # before crossing the river
-                (i,j) += (1,0)
+                (i,j) = (i+1,j)
                 if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
-                    legalMoves.append((x,y),(i,j))
+                    legalMoves.append(((x,y),(i,j)))
             else: # after crossing the river
                 for unitStep in unitSteps:
-                    (i,j) += unitStep
+                    (i,j) = self.add_tuple((i,j) , unitStep)
                     if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
-                        legalMoves.append((x,y),(i,j))
+                        legalMoves.append(((x,y),(i,j)))
                     (i,j) = (x,y)
         return legalMoves
 
@@ -206,36 +208,31 @@ class MoveRuleHandler:
         return : King move list: move one step orthogonally in palace
         """
         legalMoves = []
-        unitSteps = [(-1,0),(0,-1),(1,0),(1,0)]
+        unitSteps = [(-1,0),(0,-1),(1,0),(0,1)]
         (i,j) = (x,y)
         for unitStep in unitSteps:
-            (i,j) += unitStep
-            if self._board.isInPalace((i,j)) and not self.board.isOnSameSide((x,y),(i,j)):
-                legalMoves.append((x,y),(i,j))
+           # print "testing====how many time king unitstep"
+            (i,j) = self.add_tuple((i,j) , unitStep)
+            if self._board.isInPalace((i,j)) and ( self._board.getPiece((i,j))=="*" or not self._board.isOnSameSide((x,y),(i,j))):
+                legalMoves.append(((x,y),(i,j)))
             (i,j) = (x,y)
 
         return legalMoves
 
+    def add_tuple(self,t1,t2):
+        return tuple(x + y for x, y in zip(t1,t2))
 
 
+if __name__ == "__main__":
+    print "=============Testing for Chess move rules==========="
+    print "For testing use, import Board class"
+    board_for_test = Board()
+    board_for_test.printBoard()
+    moveRuleHandler = MoveRuleHandler(board_for_test)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    print "=====King :  king_moveList====="
+    print "Black King : ",moveRuleHandler.king_moveList((0,4))
+    print "Red King : ",moveRuleHandler.king_moveList((9,4))
+    print "Black "
 
 

@@ -39,20 +39,18 @@ class Board:
         return self._blackValue()-self._redValue()
 
     def isOnBoard(self,coord):
-        return 0<= coord[0]<9 and 0<=coord[1]<10
+        return 0<= coord[0]<10 and 0<=coord[1]<9
 
     def isInPalace(self,(x,y)):
-        if self.onRedSide((x,y)):
-            return 7<=x<=9 and 3<=y<=5
-        else:
-            return 0<=x<=2 and 3<=y<=5
+        if not self.isOnBoard((x,y)): return False
+        return (7<=x<=9 and 3<=y<=5) or (0<=x<=2 and 3<=y<=5)
 
     def isOnSameSide(self,coord1,coord2):
         return self._state[coord1].islower() == self._state[coord2].islower()
 
     def onRedSide(self,coord):
         #return True if on red side
-        return self._state[coord].isUpper()
+        return self._state[coord].isupper()
         # return self._state[coord] in self._state._redSet
 
 
