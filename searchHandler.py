@@ -1,9 +1,12 @@
+from moveSortHandler import MoveSortHandler
+
 class SearchHandler:
     """
     MiniMax search algorithm with alpha-beta pruning.
     """
-    def __init__(self,board):
+    def __init__(self,board,broadth=10):
         self._board = board
+        self._moveSortHandler = MoveSortHandler(board,broadth)
         return
 
     def getBestMove(self,depth=4):
@@ -27,9 +30,10 @@ class SearchHandler:
             return (self._board._lastMove,self._board.calcValue())
 
         legalMoves = self._board.allLegalMoves(isMax)# isMax = Computer =Black side
+        sortedLegalMoves = self._moveSortHandler.sortLegalMoves(legalMoves)
         best_move = None
         if isMax:
-            for move in legalMoves:
+            for move in sortedLegalMoves:
                 self._board.makeMove(move)
 
 #                print "Black: Search after makeMove"
@@ -49,7 +53,7 @@ class SearchHandler:
                     break
             return (best_move,alpha)
         else: #Red side - Player
-            for move in legalMoves:
+            for move in sortedLegalMoves:
                 self._board.makeMove(move)
 #                print "Red: Search after makeMove"
 #                self._board.printBoard()

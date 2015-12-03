@@ -55,6 +55,9 @@ class Board:
         return self._state[coord].isupper()
         # return self._state[coord] in self._state._redSet
 
+    def isCaptureMove(self,move):
+        return self._moveRuleHandler.isCaptureMove(move)
+
 
     def allLegalMoves(self,BlackSide):
         allLegalMoves = []
@@ -185,6 +188,8 @@ class Board:
                     print "now the piece,target ",piece,target
                     print "red set ",self._redSet
                     print  "black set ",self._blackSet
+                    print "current board is "
+                    self.printBoard()
                     raise Exception("again!!! angry!!")
                 if self._redSet[target]==[]:
                     # if no pieces left remove from board list
@@ -249,9 +254,9 @@ class Board:
     def checkWinner(self):
         # check if king was captured
         if "K" not in self._redSet:
-            return "You"
-        elif  "k" not in self._blackSet:
             return "Computer"
+        elif  "k" not in self._blackSet:
+            return "You"
         else:
             return None
 

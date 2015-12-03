@@ -22,7 +22,8 @@ class Game:
 
         self.board = Board()
         self.userHandler = UserHandler()
-        self.searchHandler = SearchHandler(self.board)
+        """  ********  You can control the search broadth for each layer here, the default is 20"""
+        self.searchHandler = SearchHandler(self.board,20)
         self.uiHandler = UIHandler(self.board)
 
         self.run()
@@ -36,13 +37,13 @@ class Game:
             self.board.makeMove((oldCoord,newCoord)) #player move, board state updated
             self.uiHandler.printBoard()
             if self.checkOver():
-                return
+                exit()
             (oldCoord,newCoord) = self.searchHandler.getBestMove(4)
-            print "get best move ",(oldCoord,newCoord)
+            print "*************Computer's move ",(oldCoord,newCoord),"****************"
             self.board.makeMove((oldCoord,newCoord)) # computer move, board state updated
             self.uiHandler.printBoard()
             if self.checkOver():
-                return
+               exit()
 
 
 

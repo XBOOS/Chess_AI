@@ -7,11 +7,13 @@ class MoveRuleHandler:
         self._board = board
 
 # for moves capable of capturing other pieces
-    def captureMoves(self):
-        return
 
-    def positionMoves(self):
-        return
+    def isCaptureMove(self,(oldCoord,newCoord)):
+
+        #here assume all illegal, so not on the same side
+        #just check the target position whether has a piece
+        return self._board.getPiece(newCoord) !="*"
+
 
     def isMoveLegal(self,piece,(oldCoord,newCoord)):
         return (oldCoord,newCoord) in self.getLegalMoveList(piece,oldCoord)
@@ -181,7 +183,7 @@ class MoveRuleHandler:
         legalMoves = []
         # exclude when the target postition is occupied by pieces on the same side
         for (i,j) in positions[(x,y)]:
-            if self._board.getPiece((i,j)) !="*" and self._board.isOnSameSide((i,j),(x,j)):
+            if self._board.getPiece((i,j)) !="*" and self._board.isOnSameSide((i,j),(x,y)):
                 pass
             else:
                 legalMoves.append(((x,y),(i,j)))
