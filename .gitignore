@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# now make the moveRuleHandler and searchHander private until finished
+#searchHandler.py
+#moveRuleHandler.py
 # C extensions
 *.so
 
