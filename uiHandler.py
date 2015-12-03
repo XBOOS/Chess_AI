@@ -6,21 +6,34 @@ class UIHandler:
         self._board = board
         return
     def printInit(self):
-        print "Welcome to Bing's Chinese chess game"
-        print "================================================================"
-        print "Instructions:"
-        print "================================================================"
-        print "Symbol representation:\n","K = King, A = Advisor, E = Elephant,\nC = Cannon, H = Horse, R = Rook, P = Pawns"
-        print "Your pieces: K A E C H R P. Computer pieces: k a e c h r p."
-        print "================================================================"
-        print "Chess Board:"
-        print "================================================================"
-        print "grids of 10 ranks (from 0 to 9)* 9 files(from 0 to 8)"
-        print "For your move,specify the start and target coordinates in the form of (x1,y1) (x2,y2)"
+        print """
+                            Bing's Chinese Chess Game
+        ****************************************************************
 
-        print "================================================================"
-        print "You are Red side. Move first"
-        print "You can search for more information on chinese chess rules to play the game. \nEnjoy the time!"
+                                Instructions:
+        ****************************************************************
+                            Symbol representation:
+        K = King, A = Advisor, E = Elephant,
+        C = Cannon, H = Horse, R = Rook, P = Pawns
+        Your pieces: K A E C H R P
+        Computer pieces: k a e c h r p
+        ****************************************************************
+                                Chess Board:
+        ****************************************************************
+        Grids : 10 rows (0 to 9) * 9 columns (0 to 8)
+        Move :  Type in the start and target coordinates
+                in the form of 'row_number,column_number'
+        Example :
+        >>Piece to move (0~9),(0~8): 3,4
+        >>Position to go (0~9),(0~8): 7,8
+        Then you move the piece in (3,4) to (7,8)
+
+        ****************************************************************"
+        Extra tips :
+        You are Red side. Move first
+        You can search for more information on chinese chess rules to play the game.
+        Enjoy the time!
+        """
 
 
     def printBoard(self):
