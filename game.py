@@ -37,7 +37,8 @@ class Game:
             self.uiHandler.printBoard()
             if self.checkOver():
                 return
-            (oldCoord,newCoord) = self.searchHandler.getBestMove()
+            (oldCoord,newCoord) = self.searchHandler.getBestMove(2)
+            print "get best move ",(oldCoord,newCoord)
             self.board.makeMove((oldCoord,newCoord)) # computer move, board state updated
             self.uiHandler.printBoard()
             if self.checkOver():

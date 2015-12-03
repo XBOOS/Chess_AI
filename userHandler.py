@@ -10,14 +10,22 @@ class UserHandler:
         return legal move (oldCoord,newCoord)
         """
         legal = False
-        msg = "Game start!"
+        msg = ""
         while not legal:
             print msg
             user_input = raw_input("Piece to move ? (0~9),(0~8) : ")
-            oldCoord = tuple(map(int,(user_input.split(","))))
+            try:
+                oldCoord = tuple(map(int,(user_input.split(","))))
+            except Exception :
+                (legal,msg) = (False,"Wrong syntax, typein 'row_number,column_number' ")
+                continue
 
             user_input = raw_input("Position to go ? (0~9),(0~8) : ")
-            newCoord = tuple(map(int,(user_input.split(","))))
+            try:
+                newCoord = tuple(map(int,(user_input.split(","))))
+            except Exception :
+                (legal,msg) = (False,"Wrong syntax, typein 'row_number,column_number' ")
+                continue
             (legal,msg) = self.isMoveLegal(board,oldCoord,newCoord)
 
         return (oldCoord,newCoord)

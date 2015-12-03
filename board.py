@@ -66,10 +66,11 @@ class Board:
             for piece in self._redSet:
                 for coord in self._redSet[piece]:
                     allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
-
+        """
         print "=========For debugging: total number of possible legal moves : ",len(allLegalMoves)
         print "now the red set are ",self._redSet
         print allLegalMoves
+        """
         return allLegalMoves
 
 
@@ -95,7 +96,7 @@ class Board:
         target = self._state[newCoord]
         #Can just check the upper and lowercase of letter ,depends on which is faster
 
-        print "piece and target are :",piece, target
+        #print "piece and target are :",piece, target
         if piece in self._redSet and target in self._redSet:
             return False
         elif piece in self._blackSet and target in self._blackSet:
@@ -110,8 +111,10 @@ class Board:
             RedSide = self.onRedSide(newCoord)
         piece = self.getPiece(newCoord)
         target = self._lastCapturedPiece.pop() # the name is corresponding to makeMove
-        print "here is the lastCapturedPiece..",target
+
+        # print "here is the lastCapturedPiece..",target
         #restore the chess board state and piece set
+
         self.setPiece(oldCoord,piece)
         self.setPiece(newCoord,target)
 
@@ -121,10 +124,9 @@ class Board:
         else:
             self._blackSet[piece] = [oldCoord if x==newCoord else x for x in self._blackSet[piece]]
 
-
         if target =="*":
-            print "Attention here , the captured piece is just *"
             return
+
         if RedSide:# the captured piece is black
             if target in self._blackSet:
                 self._blackSet[target].append(newCoord)
@@ -151,11 +153,10 @@ class Board:
         target = self.getPiece(newCoord)
 
         self._lastMove = (oldCoord,newCoord)
-        print "Move in search : ",oldCoord,"=>",newCoord
+        # print "Move in search : ",oldCoord,"=>",newCoord
 
         if RedSide ==None:
             RedSide = self.onRedSide((oldCoord))
-            print "if it is on redSide? ",RedSide
         #special case : King suicide, but this would be prevented by evaluation func
         if RedSide:
         # if piece in self._redSet:
