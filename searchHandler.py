@@ -7,6 +7,7 @@ class SearchHandler:
         return
 
     def getBestMove(self,depth=4):
+        self._board.stackClear()
         (best_move,value) = self.alphaBeta(True,depth,-float("inf"),float("inf"))
         return best_move
 

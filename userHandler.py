@@ -20,7 +20,7 @@ class UserHandler:
                 (legal,msg) = (False,"Wrong syntax, typein 'row_number,column_number' ")
                 continue
 
-            user_input = raw_input("Position to go ? (0~9),(0~8) : ")
+            user_input = raw_input("Position to go? (0~9),(0~8) : ")
             try:
                 newCoord = tuple(map(int,(user_input.split(","))))
             except Exception :

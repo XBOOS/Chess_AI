@@ -75,6 +75,10 @@ class Board:
 
 
 
+    def stackClear(self):
+        #clear the cache before each search
+        self._lastCapturedPiece = list()
+        return
 
     def isMoveLegal(self,(oldCoord,newCoord)):
         """
@@ -175,7 +179,13 @@ class Board:
         if target != "*":
             if not RedSide:#only can eat piece of other side
             #if target in self._redSet:
-                self._redSet[target].remove(newCoord)
+                try:
+                    self._redSet[target].remove(newCoord)
+                except Exception:
+                    print "now the piece,target ",piece,target
+                    print "red set ",self._redSet
+                    print  "black set ",self._blackSet
+                    raise Exception("again!!! angry!!")
                 if self._redSet[target]==[]:
                     # if no pieces left remove from board list
                     del self._redSet[target]
