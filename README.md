@@ -1,8 +1,10 @@
 # Chinese Chess AI game
+
 Implementing the chinese chess game playing between computer and human.
 
 ## Methodology
-###1. For game search:  MiniMax algorithm with alpha-beta pruning. 
+###1. For game search:  
++ MiniMax algorithm with alpha-beta pruning. 
 
 ###2. Evaluation function & heuristics:
 
