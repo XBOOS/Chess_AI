@@ -36,18 +36,18 @@ class Game:
             self.board.makeMove((oldCoord,newCoord)) #player move, board state updated
             self.uiHandler.printBoard()
             if self.checkOver():
-                break
+                return
             (oldCoord,newCoord) = self.searchHandler.getBestMove()
             self.board.makeMove((oldCoord,newCoord)) # computer move, board state updated
             self.uiHandler.printBoard()
             if self.checkOver():
-                break
+                return
 
 
 
     def checkOver(self):
         winner = self.board.checkWinner()
-        if not winner:
+        if winner:
             print "Game over!", winner, "Won !"
             return True
         else:

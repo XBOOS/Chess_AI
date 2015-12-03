@@ -1,6 +1,6 @@
 # contain the piece moving rules of Chinese Chess
 # Imply the rules by possbile moves
-# from board import Board #just for testing
+#from board import Board #just for testing
 class MoveRuleHandler:
 
     def __init__(self,board):
@@ -179,8 +179,12 @@ class MoveRuleHandler:
                 ,(7,3):[(8,4)]
                 ,(7,5):[(8,4)]}
         legalMoves = []
+        # exclude when the target postition is occupied by pieces on the same side
         for (i,j) in positions[(x,y)]:
-            legalMoves.append(((x,y),(i,j)))
+            if self._board.getPiece((i,j)) !="*" and self._board.isOnSameSide((i,j),(x,j)):
+                pass
+            else:
+                legalMoves.append(((x,y),(i,j)))
         return legalMoves
 
 #        legalMoves = []
@@ -231,24 +235,24 @@ class MoveRuleHandler:
             unitSteps = [(-1,0),(0,-1),(0,1)]
             if x>4: # before crossing the river
                 (i,j) = (i-1,j)
-                if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
+                if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)):
                     legalMoves.append(((x,y),(i,j)))
             else: # after crossing the river
                 for unitStep in unitSteps:
                     (i,j) = self.add_tuple((i,j) , unitStep)
-                    if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
+                    if self._board.isOnBoard((i,j)) and (self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j))):
                         legalMoves.append(((x,y),(i,j)))
                     (i,j) = (x,y)
         else: # on the black side
             unitSteps = [(1,0),(0,1),(0,-1)]
             if x<5: # before crossing the river
                 (i,j) = (i+1,j)
-                if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
+                if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)):
                     legalMoves.append(((x,y),(i,j)))
             else: # after crossing the river
                 for unitStep in unitSteps:
                     (i,j) = self.add_tuple((i,j) , unitStep)
-                    if self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j)): # before crossing the river
+                    if self._board.isOnBoard((i,j)) and (self._board.getPiece((i,j)) == "*" or not self._board.isOnSameSide((x,y),(i,j))):
                         legalMoves.append(((x,y),(i,j)))
                     (i,j) = (x,y)
         return legalMoves

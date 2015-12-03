@@ -6,6 +6,10 @@ class SearchHandler:
         self._board = board
         return
 
+    def getBestMove(self):
+        (best_move,value) = self.alphaBeta(True,4,-float("inf"),float("inf"))
+        return best_move
+
     def alphaBeta(self,isMax,depth,alpha,beta):
         """
         return (best_move,alpha/beta)
@@ -15,15 +19,20 @@ class SearchHandler:
         print " now the depth is ",depth
         if depth == 0 or self._board.checkOver():
             # reach the search depth limit or terminal node
+            print " now returning the last_move and calcValue",self._board._lastMove,self._board.calcValue()
             return (self._board._lastMove,self._board.calcValue())
 
         legalMoves = self._board.allLegalMoves(isMax)# isMax = Computer =Black side
         best_move = None
         if isMax:
             for move in legalMoves:
-                self._board.makeMove(move)
+                self._board.makeMove(move,False)
+                print "Black: Search after makeMove"
+                self._board.printBoard()
                 (childMove,childValue) = self.alphaBeta(False,depth-1,alpha,beta)
-                self._board.unmakeMove(move)
+                self._board.unmakeMove(move,False)
+                print "Black: Search after UNmakeMove"
+                self._board.printBoard()
 
                 if alpha < childValue:
                    # (best_move,alpha) = (childMove,childValue)
@@ -33,11 +42,19 @@ class SearchHandler:
                     print "alpha cutoff pruning here"
                     break
             return (best_move,alpha)
-        else:
+        else: #Red side - Player
             for move in legalMoves:
-                self._board.makeMove(move)
+                self._board.makeMove(move,True)
+                print "Red: Search after makeMove"
+                self._board.printBoard()
+
                 (childMove,childValue) = self.alphaBeta(True,depth-1,alpha,beta)
-                self._board.unmakeMove(move)
+
+                print ".......did i call unmakeMove here?"
+                self._board.unmakeMove(move,True)
+                print "Red: Search after UNmakeMove"
+                self._board.printBoard()
+
                 if beta > childValue:
                    # (best_move,beta) = (childMove,childValue)
                    beta = childValue

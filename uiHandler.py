@@ -37,7 +37,7 @@ class UIHandler:
 
 
     def printBoard(self):
-        self._board.toString()
+        self._board.printBoard()
     def printMoves(self,moveList):
         print "Number of total moves : ",len(moveList)
         for (oldCoord,newCoord) in moveList:

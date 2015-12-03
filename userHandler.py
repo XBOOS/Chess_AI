@@ -18,9 +18,9 @@ class UserHandler:
 
             user_input = raw_input("Position to go ? (0~9),(0~8) : ")
             newCoord = tuple(map(int,(user_input.split(","))))
-            (legal,msg) = self.isMoveLegal(oldCoord,newCoord)
+            (legal,msg) = self.isMoveLegal(board,oldCoord,newCoord)
 
-            return (oldCoord,newCoord)
+        return (oldCoord,newCoord)
 
     def isMoveLegal(self,board,oldCoord,newCoord):
         """
@@ -30,7 +30,7 @@ class UserHandler:
         """
         if not board.isOnBoard(oldCoord):
             return (False,"position not on board!")
-        elif not board.onRedSide(board.getPiece(oldCoord)):
+        elif not board.onRedSide(oldCoord):
             return (False,"You can only move red piece! (Upper char)")
         else:
             return (board.isMoveLegal((oldCoord,newCoord)),"Illegal move!")

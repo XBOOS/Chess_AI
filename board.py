@@ -14,7 +14,8 @@ class Board:
     """
     def __init__(self):
         self._state = np.zeros((10,9),dtype = object)#['*' for i in range(90)]
-        self._lastCapturedPiece = None
+        self._lastCapturedPiece = list()
+        self._lastMove = None  #for search cache
         self._initialize()
         self._evaluator = Evaluator(self)
         self._moveRuleHandler = MoveRuleHandler(self)
@@ -29,7 +30,7 @@ class Board:
         self._blackSet = {"r":[(0,0),(0,8)],
                 "h":[(0,1),(0,7)],
                 "e":[(0,2),(0,6)],
-                "A":[(0,3),(0,5)],
+                "a":[(0,3),(0,5)],
                 "k":[(0,4)],
                 "c":[(2,1),(2,7)],
                 "p":[(3,0),(3,2),(3,4),(3,6),(3,8)]}
@@ -58,18 +59,20 @@ class Board:
     def allLegalMoves(self,BlackSide):
         allLegalMoves = []
         if BlackSide:
-            for piece in self._redSet:
-                for coord in self._redSet[piece]:
-                    allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
-        else:
             for piece in self._blackSet:
                 for coord in self._blackSet[piece]:
                     allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
+        else:
+            for piece in self._redSet:
+                for coord in self._redSet[piece]:
+                    allLegalMoves.extend(self._moveRuleHandler.getLegalMoveList(piece,coord))
 
+        print "=========For debugging: total number of possible legal moves : ",len(allLegalMoves)
+        print "now the red set are ",self._redSet
+        print allLegalMoves
         return allLegalMoves
 
 
-        print "=========For debugging: total number of possible legal moves : ",len(allLegalMoves)
 
 
     def isMoveLegal(self,(oldCoord,newCoord)):
@@ -106,25 +109,35 @@ class Board:
         if RedSide==None:
             RedSide = self.onRedSide(newCoord)
         piece = self.getPiece(newCoord)
-        target = self._lastCapturedPiece # the name is corresponding to makeMove
+        target = self._lastCapturedPiece.pop() # the name is corresponding to makeMove
+        print "here is the lastCapturedPiece..",target
         #restore the chess board state and piece set
         self.setPiece(oldCoord,piece)
         self.setPiece(newCoord,target)
+
+        if RedSide:
+        # if piece in self._redSet:
+            self._redSet[piece] = [oldCoord if x==newCoord else x for x in self._redSet[piece]]
+        else:
+            self._blackSet[piece] = [oldCoord if x==newCoord else x for x in self._blackSet[piece]]
+
+
         if target =="*":
+            print "Attention here , the captured piece is just *"
             return
         if RedSide:# the captured piece is black
             if target in self._blackSet:
-                self._blackSet.append(newCoord)
+                self._blackSet[target].append(newCoord)
             else:
                 self._blackSet[target] = [newCoord]
         else:
             if target in self._redSet:
-                self._redSet.append(newCoord)
+                self._redSet[target].append(newCoord)
             else:
                 self._redSet[target] = [newCoord]
 
 
-        self.makeMove((newCoord,oldCoord),RedSide)
+        #self.makeMove((newCoord,oldCoord),RedSide)
 
     def makeMove(self,(oldCoord,newCoord),RedSide=None):
         #should pass in player?  Ride = Player = True, Black = Computer = False
@@ -136,8 +149,13 @@ class Board:
         #target = self.getPiece[newCoord[0]][newCoord[1]]
         piece = self.getPiece(oldCoord)
         target = self.getPiece(newCoord)
+
+        self._lastMove = (oldCoord,newCoord)
+        print "Move in search : ",oldCoord,"=>",newCoord
+
         if RedSide ==None:
             RedSide = self.onRedSide((oldCoord))
+            print "if it is on redSide? ",RedSide
         #special case : King suicide, but this would be prevented by evaluation func
         if RedSide:
         # if piece in self._redSet:
@@ -151,7 +169,7 @@ class Board:
         self.setPiece(newCoord,piece)
 
         #cache this captured piece
-        self._lastCapturedPiece = target
+        self._lastCapturedPiece.append(target)
         #if is capturing move,update the piece list
         if target != "*":
             if not RedSide:#only can eat piece of other side
@@ -213,6 +231,18 @@ class Board:
 
     def splitXY(self,xy):
         return (xy//9,xy%9)
+
+    def checkOver(self):
+        return self.checkWinner()!=None
+
+    def checkWinner(self):
+        # check if king was captured
+        if "K" not in self._redSet:
+            return "You"
+        elif  "k" not in self._blackSet:
+            return "Computer"
+        else:
+            return None
 
     def printBoard(self):
         print "\n\n             Current Board"
