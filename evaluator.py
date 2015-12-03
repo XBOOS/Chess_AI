@@ -38,7 +38,7 @@ class Evaluator:
                 positionValue = self.evaPosition(piece,coord)
                 flexibilityValue = self.evaFlexibility(piece,coord)
                 #relationshipValue
-                value += self._piece_coef*pieceValue + self._position_coef*positionValue+self._flexibility_coef*flexibilityValue#+....
+                value += self._piece_coef*pieceValue + self._position_coef*positionValue+self._flexibility_coef*flexibilityValue  #+....
         return value
 
 

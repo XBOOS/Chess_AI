@@ -4,7 +4,7 @@ class SearchHandler:
     """
     MiniMax search algorithm with alpha-beta pruning.
     """
-    def __init__(self,board,broadth=10):
+    def __init__(self,board,broadth=None):
         self._board = board
         self._moveSortHandler = MoveSortHandler(board,broadth)
         return

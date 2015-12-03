@@ -19,14 +19,17 @@ class MoveSortHandler:
         I will sort it according to wether it is capturing move and value(eaten piece)/value(attacker)
 
     """
-    def __init__(self,board,limit=20):
+    def __init__(self,board,limit=None):
         self._board = board
         self._limit = limit
         return
 
     def sortLegalMoves(self,moveList):
         #sort the move list according to the move quality value
-        return sorted(moveList,key=self._getMoveQuality,reverse=True)[:self._limit]
+        if self._limit !=None:
+            return sorted(moveList,key=self._getMoveQuality,reverse=True)[:self._limit]
+        else:
+            return sorted(moveList,key=self._getMoveQuality,reverse=True)
 
 
         return
